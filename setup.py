@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from setuptools import setup, Extension
+import sys
 
 try:
     import Cython
@@ -17,7 +18,21 @@ or upgrade to a recent PIP release.
 with open('README.md') as f:
     long_description = f.read()
 
+include_dirs = None
+if '--include-dirs' in sys.argv:
+    index = sys.argv.index('--include-dirs')
+    sys.argv.pop(index)
+    include_dirs = [sys.argv.pop(index)]
+    
+library_dirs = None
+if '--library-dirs' in sys.argv:
+    index = sys.argv.index('--library-dirs')
+    sys.argv.pop(index)
+    library_dirs = [sys.argv.pop(index)]
 
+print(library_dirs)
+print(include_dirs)
+    
 setup(
     name='PyMUMPS',
     version='0.3.2',
@@ -36,6 +51,8 @@ setup(
             'mumps._dmumps',
             sources=['mumps/_dmumps.pyx'],
             libraries=['dmumps', 'mumps_common', 'esmumps', 'metis', 'scotch', 'openblas', 'mpiseq', 'pord'],
+            include_dirs=include_dirs,
+            library_dirs=library_dirs
         ),
     ],
     install_requires=['mpi4py'],
